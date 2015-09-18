@@ -8,11 +8,13 @@
 import re
 # Also import Sys to allow command line arguments
 import sys
-if len(sys.argv) != 2:
-	print "Proper usage is world_file hueristic"
+# AStar2.py has the code for the second hueristic
+import Astar2
+if len(sys.argv) != 4:
+	print "Proper usage is world_file hueristic (1 or 2)"
 	exit(0)
-arg1 = sys.argv[1]
-#~ arg2 = sys.argv[2]
+arg1 = sys.argv[2]
+arg2 = sys.argv[3]
 
 # Open the files and read in their data
 with open(arg1, 'r') as world:
@@ -59,25 +61,19 @@ def A_Star():
 	openlist.append(start)
 	i = start
 	while len(openlist) != 0:
-		print "Row is {} and col is {}".format(i.row,i.col)
 		openlist.remove(i)
 		closedlist.append(i)
 		if i.row == 0 and i.col == 9:
 			break
 		i = A_Star_Helper(i)
 	closedlist.append(i)
-	for x in closedlist:
-		if x.parent == None:
-			print 'Row=0 Col=0'
-		else:
-			print 'Row={} Col={} ParentRow={} ParentCol={}'.format(
-			x.row,x.col,x.parent.row,x.parent.col)
+	# Find the goal node
 	end = None
 	for x in closedlist:
 		if x.row == 0 and x.col == 9:
 			end = x
 			break
-	print "Now in order:"
+	print "Nodes visited, working backwards:"
 	print_list(end)
 	print "Total Cost = {}".format(end.g)
 	print "Locations Evaluated: {}".format(len(closedlist))
@@ -86,7 +82,6 @@ def print_list(end):
 	while end.parent != None:
 		print 'Row={} Col={}'.format(
 			end.row,end.col)
-		print end.g
 		end = end.parent
 	print "Row=7 Col=0"
 
@@ -95,12 +90,6 @@ def A_Star_Helper(q):
 	#~ openlist.remove(q)
 	#~ closedlist.append(q) # Put q in the closed list
 	adj = find_adj(q) # Find all adjacent candidates for open list
-	print "Adj List:"
-	for x in adj:
-		print "{} {}".format(x.row,x.col)
-	print "Open List Before:"
-	for x in openlist:
-		print "{} {}".format(x.row,x.col)
 	#Make sure g of duplicate squares isn't better with new parent q
 	# Remove duplicate squares from adjacent list
 	for x in openlist:
@@ -116,10 +105,6 @@ def A_Star_Helper(q):
 	for x in adj:
 		x.h = manhat_h(x)
 		openlist.append(x)
-		
-	print "Open List After:"
-	for x in openlist:
-		print "{} {}".format(x.row,x.col)
 	
 	# Find the smallest f in the openlist
 	smallestf = Square(0,0,float("Inf"),0,None)
@@ -127,28 +112,26 @@ def A_Star_Helper(q):
 		f = x.g + x.h
 		if f < smallestf.g + smallestf.h:
 			smallestf = x
-	print ("f={},g={},h={}".format(
-	smallestf.g + smallestf.h, smallestf.g,smallestf.h))
 	return smallestf
 
 # Function for the manhattan hueristic
 def manhat_h(node):
 	row = node.row
 	col = node.col
-	total = 0
-	# Traverse the matrix upwards diagonally, first
-	while row > 0 and col < 9:
-		row = row - 1
-		col = col + 1
-		total = total + 14
-	# Then finish off the rows and columns
-	while row > 0:
-		row = row - 1
-		total = total + 10
-	while col < 9:
-		col = col + 1
-		total = total + 10
-	return total
+	return 10*row + 10*abs(9-col)
+	#~ # Traverse the matrix upwards diagonally, first
+	#~ while row > 0 and col < 9:
+		#~ row = row - 1
+		#~ col = col + 1
+		#~ total = total + 14
+	#~ # Then finish off the rows and columns
+	#~ while row > 0:
+		#~ row = row - 1
+		#~ total = total + 10
+	#~ while col < 9:
+		#~ col = col + 1
+		#~ total = total + 10
+	#~ return total
 
 
 def find_adj(center):
@@ -182,14 +165,6 @@ def find_adj(center):
 	if col + 1 <= 9 and final[row][col+1] != 2:
 		candidate_list.append(Square(row, col + 1, find_g(g,row,col + 1), 0, center))
 	
-	#~ # Prune our candidate list of any squares which have value 2
-	#~ # meaning they are a wall square
-	#~ for x in candidate_list:
-		#~ if final[x.row][x.col] == 2:
-			#~ print x.row
-			#~ print x.col
-			#~ candidate_list.remove(x)
-	
 	# Prune our candidate list of squares which are on the closed list
 	for y in closedlist:
 		for x in candidate_list:
@@ -210,4 +185,8 @@ def find_g(g,row,col):
 	if final[row][col]==1:
 		return g+20
 
-A_Star()
+if arg2 == '1':
+	A_Star()
+else:
+	Astar2.final = final
+	Astar2.A_Star2()
