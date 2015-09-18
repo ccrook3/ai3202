@@ -1,0 +1,86 @@
+A* Assignment
+Casey Moher-Crook
+
+To run:
+python A*.py World-.txt Hueristic
+
+Possible Hueristics are 1 or 2:
+huersistic 1 is the manhattan method, it just calculated the horizontal
+and vertical distances and multiplies them by 10
+
+hueristic 2 is the diagonal method. It is like the manhattan method, but
+it can take diagonals, each diagonal costing 14. I implemented it without
+using an equation, and instead looped through the matrix until I hit an
+end, and then finished off the horizontal and vertical parts.
+
+Results:
+
+World1.txt
+======
+For h-1, cost was 156 with 19 nodes searched.
+Nodes visited, working backwards:
+Row=0 Col=9
+Row=0 Col=8
+Row=0 Col=7
+Row=0 Col=6
+Row=0 Col=5
+Row=1 Col=4
+Row=2 Col=3
+Row=2 Col=2
+Row=3 Col=1
+Row=4 Col=1
+Row=5 Col=1
+Row=6 Col=1
+Row=7 Col=0
+
+for h-2, cost was 140 with 31 evaluated.
+Nodes visited, working backwards:
+Row=0 Col=9
+Row=0 Col=8
+Row=1 Col=7
+Row=2 Col=7
+Row=3 Col=6
+Row=3 Col=5
+Row=4 Col=4
+Row=5 Col=4
+Row=6 Col=3
+Row=7 Col=2
+Row=7 Col=1
+Row=7 Col=0
+
+World2.txt
+=============
+For h-1, cost was 152 with 18 locations visisted.
+Nodes visited, working backwards:
+Row=0 Col=9
+Row=0 Col=8
+Row=0 Col=7
+Row=0 Col=6
+Row=0 Col=5
+Row=1 Col=4
+Row=2 Col=4
+Row=3 Col=4
+Row=4 Col=3
+Row=4 Col=2
+Row=4 Col=1
+Row=5 Col=0
+Row=6 Col=0
+Row=7 Col=0
+
+for h-2, cost was 152 with 22 nodes evaluated:
+Nodes visited, working backwards:
+Row=0 Col=9
+Row=1 Col=8
+Row=2 Col=7
+Row=3 Col=6
+Row=3 Col=5
+Row=4 Col=4
+Row=5 Col=3
+Row=6 Col=3
+Row=7 Col=2
+Row=7 Col=1
+Row=7 Col=0
+
+
+
+
