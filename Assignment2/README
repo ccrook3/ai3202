@@ -3,6 +3,14 @@ Casey Moher-Crook
 
 To run:
 python A*.py World-.txt Hueristic
+Example:
+python A*.py World1.txt 1
+
+Note on format:
+I coded this so that all of the A* functions are in two files. A*
+parses the world files and the command line, and then it chooses to call
+either AStar in the first or second file, which both implement different
+hueristics.
 
 Possible Hueristics are 1 or 2:
 huersistic 1 is the manhattan method, it just calculated the horizontal
