@@ -119,19 +119,6 @@ def manhat_h(node):
 	row = node.row
 	col = node.col
 	return 10*row + 10*abs(9-col)
-	#~ # Traverse the matrix upwards diagonally, first
-	#~ while row > 0 and col < 9:
-		#~ row = row - 1
-		#~ col = col + 1
-		#~ total = total + 14
-	#~ # Then finish off the rows and columns
-	#~ while row > 0:
-		#~ row = row - 1
-		#~ total = total + 10
-	#~ while col < 9:
-		#~ col = col + 1
-		#~ total = total + 10
-	#~ return total
 
 
 def find_adj(center):
