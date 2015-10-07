@@ -1,0 +1,9 @@
+Assignment5
+Casey Moher-Crook
+
+To run:
+python Assignment5.py World1MDP.txt
+
+Notes:
+This will only work on the world file I supply, because I deleted the
+two empty lines at the bottom of the given one. 
