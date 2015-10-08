@@ -12,7 +12,7 @@ if len(sys.argv) != 3:
 	print "Proper usage is world_file hueristic (1 or 2)"
 	exit(0)
 arg1 = sys.argv[1]
-epsilon = sys.argv[2]
+epsilon = float(sys.argv[2])
 
 # Open the file and read in its data
 with open(arg1, 'r') as world:
@@ -42,21 +42,6 @@ for x in final:
 
 print
 print
-# This class helps us keep track of each square
-class Square(object):
-	def __init__(self, row, col, g, h, parent):
-		self.row = row
-		self.col = col
-		self.g = g
-		self.parent = parent
-
-x = 0
-y = 0
-states = set()
-for x in range(len(final)):
-    for y in range(len(final[0])):
-        states.add((x,y))
-print states
 
 #Reward Function
 #Tests what is on the grid at the state given
@@ -65,38 +50,120 @@ def R(s):
     x = s[0]
     y = s[1]
     testVal = final[x][y]
-    if (testVal == 0):
+    if (testVal == 0 or testVal == 2):
         return 0
     elif (testVal ==1):
         return -1
-    elif (testVal == 2):
-        return -100
     elif (testVal == 3):
         return -2
-    else:
+    elif (testVal == 4):
         return 1
+    else:
+        return 50
 
-def maxT(s, U1):
-    up = 0
-    down = 0
-    right = 0
-    left = 0
+def Wall(s):
     x = s[0]
     y = s[1]
+    if final[x][y] == 2:
+        return True
+
+def maxT(s, U1):
+    x = s[0]
+    y = s[1]
+    return max(
+            up(x,y,U1),down(x,y,U1),left(x,y,U1),right(x,y,U1)
+            )
+
+def up(x,y,U1):
+    upchance = 0
+    leftchance = 0
+    rightchance = 0
+    if (x != 0 and not Wall((x-1,y))):
+        upchance = .8 * U1[(x-1,y)]
+    if (y != 0 and not Wall((x,y-1))):
+        leftchance = .1 * U1[(x,y-1)]
+    if (y != 9 and not Wall((x,y+1))):
+        rightchance = .1 * U1[(x,y+1)]
+    return upchance + leftchance + rightchance
 
      
+def down(x,y,U1):
+    downchance = 0
+    leftchance = 0
+    rightchance = 0
+    if (x != 7 and not Wall((x+1,y))):
+        downchance = .8 * U1[(x+1,y)]
+    if (y != 0 and not Wall((x,y-1))):
+        rightchance = .1 * U1[(x,y-1)]
+    if (y != 9 and not Wall((x,y+1))):
+        leftchance = .1 * U1[(x,y+1)]
+    return downchance + leftchance + rightchance
+
+
+def left(x,y,U1):
+    upchance = 0
+    leftchance = 0
+    downchance = 0
+    if (x != 0 and not Wall((x-1,y))):
+        upchance = .1 * U1[(x-1,y)]
+    if (y != 0 and not Wall((x,y-1))):
+        leftchance = .8 * U1[(x,y-1)]
+    if (x != 7 and not Wall((x+1,y))):
+        downchance = .1 * U1[(x+1,y)]
+    return upchance + leftchance + downchance
+
+
+def right(x,y,U1):
+    upchance = 0
+    rightchance = 0
+    downchance = 0
+    if (x != 0 and not Wall((x-1,y))):
+        upchance = .1 * U1[(x-1,y)]
+    if (y != 9 and not Wall((x,y+1))):
+        rightchance = .8 * U1[(x,y+1)]
+    if (x != 7 and not Wall((x+1,y))):
+        downchance = .1 * U1[(x+1,y)]
+    return upchance + downchance + rightchance
+
 # This is our main loop
-# Here, we can define some parameters if we want to change them later
-gamma = 0.97
+gamma = 0.9
 def valueIter():
-    U = dict([s,0] for s in states)
+    U1 = dict()
+    for x in range(len(final)):
+        for y in range(len(final[0])):
+            U1[(x,y)] = 0
     while (True):
-        U1 = U.copy()
+        U = U1.copy()
         delta = 0
-        for s in states:
-            U1[s] = R(s) + gamma * maxT(s,U1)
-            delta = max(delta, abs(U1[s] - U[s]))
-        if delta < epsilon * (1 - gamma) / gamma:
+        for x in range(len(final)):
+            for y in range(len(final[0])):
+                U1[(x,y)] = R((x,y)) + gamma * maxT((x,y),U)
+                delta = max(delta, abs(U1[(x,y)] - U[(x,y)]))
+        if delta < (epsilon * (1 - gamma) / gamma):
             return U
 
-print valueIter()
+# Function to help print it all out 
+def printU(U):
+    x = 0
+    y = 0
+    printList = list(final)
+    for x in range(len(final)):
+        for y in range(len(final)):
+            printList[x][y] = round(U[(x,y)],1)
+    print "Utility List:"
+    for x in printList:
+        print x
+    x = 7
+    y = 0
+    print "Order of movement:"
+    while (x > 0 and y < len(printList)):
+        if ( printList[x-1][y] > printList[x][y+1]):
+            print "{},{}->{},{} = {}".format(
+                    x,y,x-1,y,printList[x-1][y])
+            x = x - 1
+        else:
+            print "{},{}->{},{} = {}".format(
+                    x,y,x,y+1,printList[x][y+1])
+            y = y + 1
+
+printU(valueIter())

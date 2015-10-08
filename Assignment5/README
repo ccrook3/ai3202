@@ -2,8 +2,15 @@ Assignment5
 Casey Moher-Crook
 
 To run:
-python Assignment5.py World1MDP.txt
+python Assignment5.py World1MDP.txt .5
+
+Where .5 is your value for epsilon.
 
 Notes:
 This will only work on the world file I supply, because I deleted the
 two empty lines at the bottom of the given one. 
+
+No values of epsilon changed my solution. Theoretically,
+one where the E is higher should produce less stringent results,
+but I didn't find that in my case. I tried values of .1, .001, .5, .75, and 1.0.
+
